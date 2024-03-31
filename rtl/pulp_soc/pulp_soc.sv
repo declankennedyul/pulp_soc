@@ -451,6 +451,12 @@ module pulp_soc import dm::*; #(
         assign base_addr_int = 4'b0001; //FIXME attach this signal somewhere in the soc peripherals --> IGOR
     `endif
 
+    AXI_BUS #(.AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
+              .AXI_DATA_WIDTH(AXI_DATA_OUT_WIDTH),
+              .AXI_ID_WIDTH(AXI_ID_OUT_WIDTH),
+              .AXI_USER_WIDTH(AXI_USER_WIDTH)
+              ) s_wide_alu_bus();
+
 
 
     logic s_cluster_isolate_dc;
@@ -803,8 +809,20 @@ module pulp_soc import dm::*; #(
         .apb_peripheral_bus    ( s_apb_periph_bus    ),
         .l2_interleaved_slaves ( s_mem_l2_bus        ),
         .l2_private_slaves     ( s_mem_l2_pri_bus    ),
-        .boot_rom_slave        ( s_mem_rom_bus       )
+        .boot_rom_slave        ( s_mem_rom_bus       ),
+        .wide_alu_slave        ( s_wide_alu_bus      )
         );
+
+    wide_alu_top #(
+                   .AXI_ADDR_WIDTH(AXI_ADDR_WIDTH),
+                   .AXI_ID_WIDTH(AXI_ID_OUT_WIDTH),
+                   .AXI_USER_WIDTH(AXI_USER_WIDTH)
+                   ) i_wide_alu (
+                   .clk_i(s_soc_clk),
+                   .rst_ni(s_soc_rstn),
+                   .test_mode_i(dft_test_mode_i),
+                   .axi_slave(s_wide_alu_bus)
+                   );
 
     /* Debug Subsystem */
 

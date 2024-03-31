@@ -120,3 +120,6 @@ riscv-dbg:
 register_interface:
   commit: b1bc9c22e0c2a5801107070c022904498dbae34b
   domain: [soc]
+wide_alu_ip:
+  commit: master
+  group: declankennedyul
